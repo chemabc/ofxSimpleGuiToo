@@ -17,6 +17,7 @@ public:
 	bool		focused;
 	bool		newColumn;
 	bool		hasTitle;
+	bool		visible;
 	char		keyboardShortcut;
 
 	ofxSimpleGuiControl(string name);
@@ -30,12 +31,12 @@ public:
 	ofxSimpleGuiControl& setFullColor(bool forceActive = false);
 	ofxSimpleGuiControl& setEmptyColor();
 	ofxSimpleGuiControl& setKeyboardShortcut(char c);
-	
+
 #ifndef OFXMSAGUI_DONT_USE_XML
 	virtual void loadFromXML(ofxXmlSettings &XML) {}
 	virtual void saveToXML(ofxXmlSettings &XML) {}
 #endif
-    
+
 	virtual void setup() {}
 
 	virtual void draw(float x, float y) {}
@@ -46,8 +47,8 @@ public:
 	virtual void onKeyLeft() {}			// left key is pressed
 	virtual void onKeyRight() {}		// right key is pressed
 	virtual void onKeyEnter() {}		// enter key is pressed
-	
-	
+
+
 	// from ofxMSAInteractiveObject
 	virtual void onRollOver(int x, int y)					{}		// called when mouse enters object x, y, width, height
 	virtual void onRollOut()								{}		// called when mouse leaves object x, y, width, height
@@ -58,10 +59,10 @@ public:
 	virtual void onPressOutside(int x, int y, int button)	{}		// called when mouse presses while outside object
 	virtual void onRelease(int x, int y, int button)		{}		// called when mouse releases while over object
 	virtual void onReleaseOutside(int x, int y, int button)	{}		// called when mouse releases outside of object after being pressed on object
-	
+
 	virtual void keyPressed( int key ){}
 	virtual void keyReleased( int key ){}
-	
+
 
 protected:
 	ofxSimpleGuiConfig	*config;

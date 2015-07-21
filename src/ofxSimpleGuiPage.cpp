@@ -22,40 +22,40 @@ ofxSimpleGuiPage &ofxSimpleGuiPage::setXMLName(string s) {
 void ofxSimpleGuiPage::loadFromXML() {
 	ofLog(OF_LOG_VERBOSE, "ofxSimpleGuiPage::loadFromXML: " + xmlFilename);
 #ifndef OFXMSAGUI_DONT_USE_XML
-	
+
 	if(xmlFilename.compare("") == 0) return;
 
 	if(XML.loadFile(xmlFilename) == false) {
-		ofLog(OF_LOG_ERROR, "Error loading xmlFilename: " + xmlFilename);
+		ofLog(OF_LOG_ERROR, "Page "+ name + ": Error loading xmlFilename: " + xmlFilename);
 		return;
 	}
-	
+
 	XML.pushTag("controls");
 	for(int i=0; i < controls.size(); i++) {
 		controls[i]->loadFromXML(XML);
 	}
 	XML.popTag();
-#endif    
+#endif
 }
 
 
 void ofxSimpleGuiPage::saveToXML() {
 	if(controls.size() <= 1 || xmlFilename.compare("") == 0) return;	// if it has no controls (title counts as one control)
-	
+
 #ifndef OFXMSAGUI_DONT_USE_XML
 	XML.clear();	// clear cause we are building a new xml file
-	
+
 	XML.addTag("controls");
 	XML.pushTag("controls");
 	for(int i=0; i < controls.size(); i++) {
 		controls[i]->saveToXML(XML);
 	}
 	XML.popTag();
-	
+
 	XML.saveFile(xmlFilename);
-	//	if(doSaveBackup) 
+	//	if(doSaveBackup)
 	ofLog(OF_LOG_VERBOSE, "ofxSimpleGuiPage::saveToXML: " + xmlFilename + " " + ofToString(controls.size(), 0) + " items");
-#endif    
+#endif
 }
 
 
@@ -69,26 +69,26 @@ float ofxSimpleGuiPage::getNextY(float y) {
 void ofxSimpleGuiPage::draw(float x, float y, bool alignRight) {
 	setPosition(x += config->offset.x, y += config->offset.y);
 	if(alignRight) x = ofGetWidth() - x -  config->gridSize.x;
-	
+
 	float posX		= 0;
 	float posY		= 0;
 	float stealingX = 0;
 	float stealingY = 0;
-	
+
 	ofSetRectMode(OF_RECTMODE_CORNER);
-	
+
 	for(int i=0; i<controls.size(); i++) {
 		ofxSimpleGuiControl &control = *controls[i];
-		
+
 		if(control.newColumn) {
 			if(alignRight) posX -= config->gridSize.x;
 			else posX += config->gridSize.x;
 			posY = 0;
 		}
-		
+
 		float controlX = posX + x;
 		float controlY = posY + y;
-		
+
 		//we don't draw the event stealing controls until the end because they can expand and overlap with other controls (e.g. combo box)
 		if(eventStealingControl == &control) {
 			stealingX = controlX;
@@ -97,7 +97,7 @@ void ofxSimpleGuiPage::draw(float x, float y, bool alignRight) {
 //			printf("drawing control: %s %s\n", control.controlType.c_str(), control.name.c_str());
 			control.draw(controlX, controlY);
 		}
-		
+
 		if(control.hasTitle) {
 			ofNoFill();
 			ofSetHexColor(config->borderColor);
@@ -105,13 +105,13 @@ void ofxSimpleGuiPage::draw(float x, float y, bool alignRight) {
 			ofRect(controlX, controlY, control.width, control.height);
 		}
 		posY = getNextY(posY + control.height + config->padding.y);
-		
+
 		if(posY + y >= height - control.height - config->padding.y) {
 			if(alignRight) posX -= config->gridSize.x;
 			else posX += config->gridSize.x;
 			posY = 0;
 		}
-		
+
 		//		if(guiFocus == controls[i]->guiID) controls[i]->focused = true;		// MEMO
 		//		else							   controls[i]->focused = false;
 	}
@@ -166,9 +166,15 @@ ofxSimpleGuiSliderFloat &ofxSimpleGuiPage::addSlider(string name, float &value, 
 ofxSimpleGuiSlider2d &ofxSimpleGuiPage::addSlider2d(string name, ofPoint& value, float xmin, float xmax, float ymin, float ymax) {
 	return (ofxSimpleGuiSlider2d &)addControl(* new ofxSimpleGuiSlider2d(name, value, xmin, xmax, ymin, ymax));
 }
+ofxSimpleGuiSlider4d &ofxSimpleGuiPage::addSlider4d(string name, ofRectangle& value, float xmin, float xmax, float ymin, float ymax, float wmin, float wmax, float hmin, float hmax) {
+	return (ofxSimpleGuiSlider4d &)addControl(* new ofxSimpleGuiSlider4d(name, value, xmin, xmax, ymin, ymax, wmin, wmax, hmin, hmax));
+}
 
 ofxSimpleGuiTitle &ofxSimpleGuiPage::addTitle(string name, float height) {
 	return (ofxSimpleGuiTitle &)addControl(* new ofxSimpleGuiTitle(name, height));
+}
+ofxSimpleGuiTitle &ofxSimpleGuiPage::addTitle(string name,  bool bSuperTitle, float height) {
+	return (ofxSimpleGuiTitle &)addControl(* new ofxSimpleGuiTitle(name, bSuperTitle, height));
 }
 
 ofxSimpleGuiToggle &ofxSimpleGuiPage::addToggle(string name, bool &value) {
@@ -184,8 +190,13 @@ ofxSimpleGuiComboBox &ofxSimpleGuiPage::addComboBox(string name, int &choice_out
 	return (ofxSimpleGuiComboBox &)addControl(* new ofxSimpleGuiComboBox(name, choice_out, numChoices, this, choiceTitles));
 }
 
+ofxSimpleGuiInputString &ofxSimpleGuiPage::addInputString(string name, string &variable,string defaultValue) {
+    return (ofxSimpleGuiInputString &)addControl(* new ofxSimpleGuiInputString(name, variable, defaultValue));
+}
 
-
+ofxSimpleGuiInputText &ofxSimpleGuiPage::addInputText(string name, string &variable,string defaultValue) {
+    return (ofxSimpleGuiInputText &)addControl(* new ofxSimpleGuiInputText(name, variable, defaultValue));
+}
 
 void ofxSimpleGuiPage::update(ofEventArgs &e) {
 	for(int i=0; i<controls.size(); i++) controls[i]->update();
@@ -232,7 +243,7 @@ void ofxSimpleGuiPage::keyPressed(ofKeyEventArgs &e) {
 	bool keyLeft	= e.key == OF_KEY_LEFT;
 	bool keyRight	= e.key == OF_KEY_RIGHT;
 	bool keyEnter	= e.key == OF_KEY_RETURN;
-	
+
 	for(int i=0; i<controls.size(); i++) {
 		ofxSimpleGuiControl *c = controls[i];
 		if(c->isMouseOver()) {

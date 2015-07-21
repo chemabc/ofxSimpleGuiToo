@@ -2,29 +2,23 @@
 
 #include "ofxSimpleGuiControl.h"
 
-class ofxSimpleGuiTitle : public ofxSimpleGuiControl {
+class ofxSimpleGuiInputString : public ofxSimpleGuiControl {
 
 public:
 
-	bool*			value;
+	std::string*	value;
 	bool			beToggle;
 	bool			beenPressed;
-	bool            b_SuperTitle;
 
-	ofxSimpleGuiTitle(string name, float height);
-	ofxSimpleGuiTitle(string name,  bool bSuperTitle, float height);
+	ofxSimpleGuiInputString(string name, string &variable , string defaultValue);
 	void setup();
-
-#ifndef OFXMSAGUI_DONT_USE_XML
 	void loadFromXML(ofxXmlSettings &XML);
 	void saveToXML(ofxXmlSettings &XML);
-#endif
-
-    bool getValue();
-	void setValue(bool b);
+	void setValue(string b);
 	void toggle();
 	void setToggleMode(bool b);
 	void onPress(int x, int y, int button);
 	void onRelease(int x, int y, int button);
 	void draw(float x, float y);
+	std::string getValue();
 };

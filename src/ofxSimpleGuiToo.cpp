@@ -30,7 +30,7 @@ void ofxSimpleGuiToo::setup() {
 	setDraw(false);
 	setPage(1);
 	autoHeight();
-	
+
 	ofAddListener(ofEvents().keyPressed, this, &ofxSimpleGuiToo::keyPressed);
 }
 
@@ -148,11 +148,11 @@ void ofxSimpleGuiToo::drawFocus(float x, float y) {
 
 void ofxSimpleGuiToo::draw() {
 	if(!doDraw) return;
-	
+
 	ofPushStyle();
-	
+
 	glDisable(GL_DEPTH_TEST);
-	
+
 	ofSetLineWidth(3);
 
 	glDisableClientState(GL_COLOR_ARRAY);
@@ -162,7 +162,7 @@ void ofxSimpleGuiToo::draw() {
 	if(alignRight) ofLine(ofGetWidth() - headerPage->width, headerPage->height, headerPage->width, headerPage->height);
 	else ofLine(0, headerPage->height, headerPage->width, headerPage->height);
 	pages[currentPageIndex]->draw(0.0f, headerPage->height, alignRight);
-	
+
 	ofPopStyle();
 }
 
@@ -190,7 +190,7 @@ void ofxSimpleGuiToo::setPage(int i) {
 	currentPageIndex = i;
 	if(currentPageIndex >= pages.size()) currentPageIndex = 1;
 	else if(currentPageIndex < 1) currentPageIndex = pages.size()-1;
-	
+
 	if(titleButton) titleButton->setName(ofToString(currentPageIndex) + ": " + pages[currentPageIndex]->name);
 }
 
@@ -294,6 +294,11 @@ ofxSimpleGuiSlider2d &ofxSimpleGuiToo::addSlider2d(string name, ofPoint& value, 
 	return pages[currentPageIndex]->addSlider2d(name, value, xmin, xmax, ymin, ymax);
 }
 
+ofxSimpleGuiSlider4d &ofxSimpleGuiToo::addSlider4d(string name, ofRectangle& value, float xmin, float xmax, float ymin, float ymax, float wmin, float wmax, float hmin, float hmax) {
+	if(!config) setup();
+	return pages[currentPageIndex]->addSlider4d(name, value, xmin, xmax, ymin, ymax, wmin, wmax, hmin, hmax);
+}
+
 ofxSimpleGuiTitle &ofxSimpleGuiToo::addTitle(string name, float height) {
 	if(!config) setup();
 	return pages[currentPageIndex]->addTitle(name, height);
@@ -320,6 +325,15 @@ ofxSimpleGuiComboBox &ofxSimpleGuiToo::addComboBox(string name, int &value, vect
     return addComboBox(name, value, choiceTitles.size(), &choiceTitles[0]);
 }
 
+ofxSimpleGuiInputString &ofxSimpleGuiToo::addInputString(string name, string &variable, string defaultValue) {
+    if(!config) setup();
+    return pages[currentPageIndex]->addInputString(name, variable, defaultValue);
+}
+
+ofxSimpleGuiInputText &ofxSimpleGuiToo::addInputText(string name, string &variable, string defaultValue) {
+    if(!config) setup();
+    return pages[currentPageIndex]->addInputText(name, variable, defaultValue);
+}
 
 //void ofxSimpleGuiToo::setup(ofEventArgs &e) {
 void ofxSimpleGuiToo::update(ofEventArgs &e) {
@@ -380,12 +394,12 @@ void ofxSimpleGuiToo::keyPressed(ofKeyEventArgs &e) {
 			}
 		}
 	}
-	
+
 	if(doDraw) {
 		headerPage->keyPressed(e);
 		pages[currentPageIndex]->keyPressed(e);
 	}
-	
+
 }
 
 void ofxSimpleGuiToo::keyReleased(ofKeyEventArgs &e) {

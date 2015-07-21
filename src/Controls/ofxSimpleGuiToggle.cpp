@@ -21,7 +21,7 @@ void ofxSimpleGuiToggle::setup() {
 
 #ifndef OFXMSAGUI_DONT_USE_XML
 void ofxSimpleGuiToggle::loadFromXML(ofxXmlSettings &XML) {
-	setValue(XML.getValue(controlType + "_" + key + ":value", getValue()));
+	setValue(XML.getValue(controlType + "_" + key + ":value", 0));
 }
 
 void ofxSimpleGuiToggle::saveToXML(ofxXmlSettings &XML) {

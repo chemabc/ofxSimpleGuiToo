@@ -13,7 +13,7 @@ ofxSimpleGuiColorPicker::ofxSimpleGuiColorPicker(string name, ofFloatColor& colo
 	this->value = &color;
 	this->min	= 0;
 	this->max	= max;
-	
+
 	controlType = "ColorPicker";
 	setup();
 }
@@ -29,7 +29,7 @@ void ofxSimpleGuiColorPicker::setup() {
 #ifndef OFXMSAGUI_DONT_USE_XML
 void ofxSimpleGuiColorPicker::loadFromXML(ofxXmlSettings &XML) {
 	for(int i=0; i<4; i++) {
-		setValue(XML.getValue(controlType + "_" + key + ":values_" + ofToString(i), getValue(i)), i);
+		setValue(XML.getValue(controlType + "_" + key + ":values_" + ofToString(i), 0.0f), i);
 	}
 }
 
@@ -59,10 +59,10 @@ void ofxSimpleGuiColorPicker::setValue(float f, int i) {
 
 void ofxSimpleGuiColorPicker::updateSlider() {
 	if(!enabled) return;
-	
+
 	int i= (getMouseY() - y) / config->sliderHeight/2;
 	if(i<0 || i>=4) return;
-	
+
 	if(pct[i] > width) {
 		pct[i] = width;
 	}
@@ -89,46 +89,47 @@ void ofxSimpleGuiColorPicker::onDragOutside(int x, int y, int button) {
 //--------------------------------------------------------------------- update
 void ofxSimpleGuiColorPicker::update() {
 	if(!enabled) return;
-	
+
 	if(lock) {
 		updateSlider();
 	}
-	
+
 //	enabled = false;
 }
 
 //--------------------------------------------------------------------- draw
 void ofxSimpleGuiColorPicker::draw(float x, float y) {
-	
+
 //	enabled = true;
-	
+
 	//update postion of gui object
 	setPosition(x, y);
 	glPushMatrix();
 	glTranslatef(x, y, 0);
-	
+
+
 	int startY = 0;
 	for(int i=0; i<4; i++) {
-		
+
 		barwidth[i] = ofMap(getValue(i), 0, max, 0.0, (float)width);
 		if(barwidth[i] > width)	barwidth[i] = width;
 		else if(barwidth[i] < 0) barwidth[i] = 0;
-		
+
 		ofEnableAlphaBlending();
 		ofFill();
 		setEmptyColor();
 		ofRect(0, startY, width, config->sliderHeight*1.8);
-		
-	
+
+
 		switch(i) {
 			case 0:glColor3f(getValue(i), 0, 0); break;
 			case 1:glColor3f(0, getValue(i), 0); break;
 			case 2:glColor3f(0, 0, getValue(i)); break;
 			case 3:glColor3f(getValue(i), getValue(i), getValue(i)); break;
 		}
-		
+
 		ofRect(0, startY, barwidth[i], config->sliderHeight * 1.8);
-		
+
 		int iover = (getMouseY() - y) / config->sliderHeight/2;
 		bool isOver = iover == i;
 		if(isOver) {
@@ -136,21 +137,21 @@ void ofxSimpleGuiColorPicker::draw(float x, float y) {
 		} else {
 			glColor3f(0.5, 0.5, 0.5);
 		}
-		
+
 		ofDrawBitmapString(ofToString(getValue(i), 4), 3, startY + 14);
-		
+
 		startY += config->sliderHeight * 2;
 	}
-	
+
 	ofFill();
-	
+
 	setTextBGColor();
 	ofRect(0, startY, width, config->sliderTextHeight);
 
 	glColor3f(getValue(0), getValue(1), getValue(2));
 //	ofRect(0, startY+config->sliderTextHeight, width, config->sliderTextHeight * 1.5);
 	ofRect(150, startY + 3, width - 150 -3, config->sliderTextHeight - 8);
-	
+
 	setTextColor();
 	string s = name;
 	ofDrawBitmapString(s, 3, startY + 14);
